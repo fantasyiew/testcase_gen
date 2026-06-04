@@ -1,0 +1,20 @@
+# Environment variables
+.env
+
+# IDE
+.idea/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Chroma DB
+chroma_db/
+src/chroma_db/
+
+# Node modules
+node_modules/
+
+# Distribution
+src/frontend/dist/
