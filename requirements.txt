@@ -1,0 +1,29 @@
+# Web Framework
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+python-multipart>=0.0.9
+
+# LangChain Core
+langchain>=0.3.0
+langchain-core>=0.3.0
+langchain-community>=0.3.0
+langchain-openai>=0.2.0
+langchain-chroma>=0.2.0
+langchain-text-splitters>=0.3.0
+
+# LangGraph & MCP
+langgraph>=0.2.0
+langchain-mcp-adapters>=0.1.0
+mcp>=1.0.0
+
+# Vector Database
+chromadb>=0.5.0
+
+# Document Processing
+python-docx>=1.1.0
+
+# Data Validation
+pydantic>=2.0.0
+
+# Environment
+python-dotenv>=1.0.0
