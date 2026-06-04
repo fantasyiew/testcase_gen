@@ -18,3 +18,7 @@ node_modules/
 
 # Distribution
 src/frontend/dist/
+
+# Office temp files
+~$*.doc*
+~$*.xls*

@@ -1,5 +1,6 @@
 import json
 import re
+import time
 
 from langchain_core.output_parsers import StrOutputParser, PydanticOutputParser
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda
@@ -141,8 +142,10 @@ class TestCaseGenPipeline:
             feature_name: 功能点名称，如 "通用功能-登录"
 
         Returns:
-            {"feature_name": str, "test_point": str, "test_cases": [dict, ...]}
+            {"feature_name": str, "test_point": str, "test_cases": [dict, ...], "elapsed_time": float}
         """
+        start_time = time.time()
+
         test_point = self.invoke_rag(f"{feature_name}功能的相关说明是什么？")
         test_case_result = self.invoke_test_gen(context=test_point, input_desc=feature_name)
 
@@ -161,17 +164,20 @@ class TestCaseGenPipeline:
             for c in test_case_result.test_cases
         ]
 
+        elapsed_time = round(time.time() - start_time, 1)
+
         return {
             "feature_name": feature_name,
             "test_point": test_point,
             "test_cases": cases,
+            "elapsed_time": elapsed_time,
         }
 
     def generate_test_cases_for_all_features(self) -> list[dict]:
         """为所有功能点批量生成测试用例（不保存，返回给前端审核）
 
         Returns:
-            [{"feature_name": str, "test_point": str, "test_cases": [...]}, ...]
+            [{"feature_name": str, "test_point": str, "test_cases": [...], "elapsed_time": float}, ...]
         """
         features = FeatureRepo.get_all()
         results = []
@@ -186,6 +192,7 @@ class TestCaseGenPipeline:
                     "feature_name": feature_name,
                     "test_point": "",
                     "test_cases": [],
+                    "elapsed_time": 0,
                     "error": str(e),
                 })
 

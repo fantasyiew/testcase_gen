@@ -148,12 +148,14 @@ def generate_all_test_cases():
     try:
         results = pipeline.generate_test_cases_for_all_features()
         total_cases = sum(len(r.get("test_cases", [])) for r in results)
+        total_elapsed_time = round(sum(r.get("elapsed_time", 0) for r in results), 1)
         return {
             "code": 0,
             "data": {
                 "results": results,
                 "total_features": len(results),
                 "total_cases": total_cases,
+                "total_elapsed_time": total_elapsed_time,
             }
         }
     except Exception as e:

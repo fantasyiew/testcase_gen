@@ -1,13 +1,25 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Table, message, Space, Card, Collapse, Checkbox, Tag, Spin, Alert, Row, Col, Statistic } from 'antd'
-import { ExperimentOutlined, SaveOutlined, ReloadOutlined } from '@ant-design/icons'
+import { ExperimentOutlined, SaveOutlined, ReloadOutlined, ClockCircleOutlined } from '@ant-design/icons'
 import { featureApi, testCaseApi } from '../api'
+
+/** 格式化耗时显示 */
+function formatElapsed(seconds) {
+  if (seconds == null || seconds === 0) return '-'
+  if (seconds >= 60) {
+    const m = Math.floor(seconds / 60)
+    const s = Math.round(seconds % 60)
+    return s > 0 ? `${m}分${s}秒` : `${m}分钟`
+  }
+  return `${seconds}秒`
+}
 
 function GeneratePanel() {
   const [features, setFeatures] = useState([])
   const [generating, setGenerating] = useState(false)
   const [generationResults, setGenerationResults] = useState([])
   const [selectedCases, setSelectedCases] = useState({})
+  const [totalElapsed, setTotalElapsed] = useState(null)
 
   const fetchFeatures = async () => {
     try {
@@ -33,12 +45,14 @@ function GeneratePanel() {
     setGenerating(true)
     setGenerationResults([])
     setSelectedCases({})
+    setTotalElapsed(null)
 
     try {
       const res = await testCaseApi.generateAll()
       if (res.data.code === 0) {
         const results = res.data.data.results
         setGenerationResults(results)
+        setTotalElapsed(res.data.data.total_elapsed_time)
 
         const initialSelected = {}
         results.forEach((r) => {
@@ -46,7 +60,7 @@ function GeneratePanel() {
         })
         setSelectedCases(initialSelected)
 
-        message.success(`已生成 ${res.data.data.total_cases} 个测试用例，请审核后保存`)
+        message.success(`已生成 ${res.data.data.total_cases} 个测试用例，耗时 ${formatElapsed(res.data.data.total_elapsed_time)}`)
       } else {
         message.error(res.data.message || '生成失败')
       }
@@ -173,19 +187,28 @@ function GeneratePanel() {
       {!generating && generationResults.length > 0 && (
         <>
           <Row gutter={16} style={{ marginBottom: 16 }}>
-            <Col span={8}>
+            <Col span={6}>
               <Card>
                 <Statistic title="功能点数量" value={generationResults.length} suffix="个" />
               </Card>
             </Col>
-            <Col span={8}>
+            <Col span={6}>
               <Card>
                 <Statistic title="生成用例总数" value={totalGenerated} suffix="条" />
               </Card>
             </Col>
-            <Col span={8}>
+            <Col span={6}>
               <Card>
                 <Statistic title="已选择保存" value={totalSelected} suffix="条" />
+              </Card>
+            </Col>
+            <Col span={6}>
+              <Card>
+                <Statistic
+                  title="总耗时"
+                  value={formatElapsed(totalElapsed)}
+                  prefix={<ClockCircleOutlined />}
+                />
               </Card>
             </Col>
           </Row>
@@ -202,6 +225,11 @@ function GeneratePanel() {
                     <Space>
                       <Tag color="blue">{result.feature_name}</Tag>
                       <Tag>{result.test_cases?.length || 0} 条用例</Tag>
+                      {result.elapsed_time > 0 && (
+                        <Tag icon={<ClockCircleOutlined />} color="default">
+                          {formatElapsed(result.elapsed_time)}
+                        </Tag>
+                      )}
                       {selectedCount > 0 && <Tag color="green">已选 {selectedCount}</Tag>}
                       {hasError && <Tag color="red">生成失败</Tag>}
                     </Space>
