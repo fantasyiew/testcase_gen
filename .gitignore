@@ -16,9 +16,6 @@ src/chroma_db/
 # Node modules
 node_modules/
 
-# Distribution
-src/frontend/dist/
-
 # Office temp files
 ~$*.doc*
 ~$*.xls*
