@@ -81,7 +81,7 @@ function SavedPanel() {
       render: (_, record) => (
         <Space>
           <GenerateCaseButton featureId={record.id} featureName={record.full_name} onSaved={fetchData} />
-          <ExpandableCaseTable featureId={record.id} featureName={record.full_name} onDelete={handleDeleteCase} onRefresh={fetchData} />
+          <ExpandableCaseTable featureId={record.id} featureName={record.full_name} caseCount={savedCases[record.full_name] || 0} onDelete={handleDeleteCase} onRefresh={fetchData} />
         </Space>
       ),
     },
@@ -433,7 +433,7 @@ function GenerateCaseButton({ featureId, featureName, onSaved }) {
   )
 }
 
-function ExpandableCaseTable({ featureId, featureName, onDelete, onRefresh }) {
+function ExpandableCaseTable({ featureId, featureName, caseCount, onDelete, onRefresh }) {
   const [cases, setCases] = useState([])
   const [expanded, setExpanded] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -537,8 +537,8 @@ function ExpandableCaseTable({ featureId, featureName, onDelete, onRefresh }) {
         <Button size="small" onClick={handleExpand} loading={loading}>
           {expanded ? '收起' : '查看用例'}
         </Button>
-        {cases.length > 0 && (
-          <Popconfirm title={`确定清空该功能点下的 ${cases.length} 条用例?`} onConfirm={handleClearAll}>
+        {caseCount > 0 && (
+          <Popconfirm title={`确定清空该功能点下的 ${caseCount} 条用例?`} onConfirm={handleClearAll}>
             <Button size="small" danger>
               清空用例
             </Button>
