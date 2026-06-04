@@ -387,10 +387,10 @@ function GenerateCaseButton({ featureId, featureName, onSaved }) {
     { title: '模块', dataIndex: 'module_name', width: 100 },
     { title: '功能项', dataIndex: 'function', width: 100 },
     { title: '用例说明', dataIndex: 'case_description', width: 150 },
-    { title: '前置条件', dataIndex: 'precondition', ellipsis: true, render: renderEllipsis },
-    { title: '输入', dataIndex: 'input_data', ellipsis: true, render: renderEllipsis },
-    { title: '执行步骤', dataIndex: 'steps', ellipsis: true, render: renderEllipsis },
-    { title: '预期结果', dataIndex: 'expected_result', ellipsis: true, render: renderEllipsis },
+    { title: '前置条件', dataIndex: 'precondition', width: 150, ellipsis: true, render: renderEllipsis },
+    { title: '输入', dataIndex: 'input_data', width: 150, ellipsis: true, render: renderEllipsis },
+    { title: '执行步骤', dataIndex: 'steps', width: 200, ellipsis: true, render: renderEllipsis },
+    { title: '预期结果', dataIndex: 'expected_result', width: 200, ellipsis: true, render: renderEllipsis },
     {
       title: '优先级',
       dataIndex: 'priority',
@@ -449,6 +449,7 @@ function GenerateCaseButton({ featureId, featureName, onSaved }) {
               size="small"
               pagination={{ pageSize: 10 }}
               rowKey="key"
+              scroll={{ x: 1170 }}
             />
           </>
         )}
@@ -524,10 +525,10 @@ function ExpandableCaseTable({ featureId, featureName, caseCount, onDelete, onRe
     { title: '模块', dataIndex: 'module_name', width: 100 },
     { title: '功能项', dataIndex: 'function', width: 100 },
     { title: '用例说明', dataIndex: 'case_description', width: 150 },
-    { title: '前置条件', dataIndex: 'precondition', ellipsis: true, render: renderEllipsis },
-    { title: '输入', dataIndex: 'input_data', ellipsis: true, render: renderEllipsis },
-    { title: '执行步骤', dataIndex: 'steps', ellipsis: true, render: renderEllipsis },
-    { title: '预期结果', dataIndex: 'expected_result', ellipsis: true, render: renderEllipsis },
+    { title: '前置条件', dataIndex: 'precondition', width: 150, ellipsis: true, render: renderEllipsis },
+    { title: '输入', dataIndex: 'input_data', width: 150, ellipsis: true, render: renderEllipsis },
+    { title: '执行步骤', dataIndex: 'steps', width: 200, ellipsis: true, render: renderEllipsis },
+    { title: '预期结果', dataIndex: 'expected_result', width: 200, ellipsis: true, render: renderEllipsis },
     {
       title: '优先级',
       dataIndex: 'priority',
@@ -576,6 +577,7 @@ function ExpandableCaseTable({ featureId, featureName, caseCount, onDelete, onRe
           size="small"
           pagination={{ pageSize: 10 }}
           rowKey="id"
+          scroll={{ x: 1270 }}
           style={{ marginTop: 8 }}
         />
       )}

@@ -137,10 +137,10 @@ function GeneratePanel() {
     { title: '模块名称', dataIndex: 'module_name', width: 120 },
     { title: '功能项', dataIndex: 'function', width: 100 },
     { title: '用例说明', dataIndex: 'case_description', width: 180 },
-    { title: '前置条件', dataIndex: 'precondition', ellipsis: true },
-    { title: '输入', dataIndex: 'input_data', ellipsis: true },
-    { title: '执行步骤', dataIndex: 'steps', ellipsis: true },
-    { title: '预期结果', dataIndex: 'expected_result', ellipsis: true },
+    { title: '前置条件', dataIndex: 'precondition', width: 150, ellipsis: true },
+    { title: '输入', dataIndex: 'input_data', width: 150, ellipsis: true },
+    { title: '执行步骤', dataIndex: 'steps', width: 200, ellipsis: true },
+    { title: '预期结果', dataIndex: 'expected_result', width: 200, ellipsis: true },
     {
       title: '优先级',
       dataIndex: 'priority',
@@ -259,6 +259,7 @@ function GeneratePanel() {
                         size="small"
                         pagination={false}
                         rowKey="key"
+                        scroll={{ x: 1150 }}
                       />
                     </>
                   )}
