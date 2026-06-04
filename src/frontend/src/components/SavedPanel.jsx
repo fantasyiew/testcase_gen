@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Table, Card, Statistic, Row, Col, Tag, Button, message, Popconfirm, Modal, Checkbox, Space, Spin, Alert, Tooltip } from 'antd'
-import { ReloadOutlined, DeleteOutlined, ExperimentOutlined, SaveOutlined, DownloadOutlined } from '@ant-design/icons'
+import { ReloadOutlined, DeleteOutlined, ExperimentOutlined, SaveOutlined, DownloadOutlined, ClockCircleOutlined } from '@ant-design/icons'
 import { featureApi, testCaseApi } from '../api'
 import * as XLSX from 'xlsx-js-style'
 
@@ -280,23 +280,38 @@ function ExportModal({ features, open, onCancel }) {
   )
 }
 
+/** 格式化耗时显示 */
+function formatElapsed(seconds) {
+  if (seconds == null || seconds === 0) return '-'
+  if (seconds >= 60) {
+    const m = Math.floor(seconds / 60)
+    const s = Math.round(seconds % 60)
+    return s > 0 ? `${m}分${s}秒` : `${m}分钟`
+  }
+  return `${seconds}秒`
+}
+
 function GenerateCaseButton({ featureId, featureName, onSaved }) {
   const [modalOpen, setModalOpen] = useState(false)
   const [generating, setGenerating] = useState(false)
   const [testCases, setTestCases] = useState([])
   const [selectedIndices, setSelectedIndices] = useState([])
+  const [elapsedTime, setElapsedTime] = useState(null)
 
   const handleGenerate = async () => {
     setModalOpen(true)
     setGenerating(true)
     setTestCases([])
     setSelectedIndices([])
+    setElapsedTime(null)
 
     try {
       const res = await testCaseApi.generate(featureName)
       if (res.data.code === 0) {
         setTestCases(res.data.data.test_cases || [])
-        message.success(`已生成 ${res.data.data.test_cases?.length || 0} 个测试用例，请审核后保存`)
+        setElapsedTime(res.data.data.elapsed_time)
+        const timeStr = formatElapsed(res.data.data.elapsed_time)
+        message.success(`已生成 ${res.data.data.test_cases?.length || 0} 个测试用例，耗时 ${timeStr}`)
       } else {
         message.error(res.data.message || '生成失败')
       }
@@ -420,13 +435,22 @@ function GenerateCaseButton({ featureId, featureName, onSaved }) {
         ) : testCases.length === 0 ? (
           <Alert message="未生成测试用例" description="请等待生成完成" type="info" showIcon />
         ) : (
-          <Table
-            columns={caseColumns}
-            dataSource={testCases.map((c, i) => ({ ...c, key: i }))}
-            size="small"
-            pagination={{ pageSize: 10 }}
-            rowKey="key"
-          />
+          <>
+            {elapsedTime > 0 && (
+              <div style={{ marginBottom: 12 }}>
+                <Tag icon={<ClockCircleOutlined />} color="processing">
+                  耗时 {formatElapsed(elapsedTime)}
+                </Tag>
+              </div>
+            )}
+            <Table
+              columns={caseColumns}
+              dataSource={testCases.map((c, i) => ({ ...c, key: i }))}
+              size="small"
+              pagination={{ pageSize: 10 }}
+              rowKey="key"
+            />
+          </>
         )}
       </Modal>
     </>
