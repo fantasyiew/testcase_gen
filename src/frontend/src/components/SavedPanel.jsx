@@ -459,17 +459,15 @@ function GenerateCaseButton({ featureId, featureName, onSaved }) {
 }
 
 function ExpandableCaseTable({ featureId, featureName, caseCount, onDelete, onRefresh }) {
+  const [modalOpen, setModalOpen] = useState(false)
   const [cases, setCases] = useState([])
-  const [expanded, setExpanded] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const handleExpand = async () => {
-    if (!expanded) {
-      setLoading(true)
-      await fetchTestCases()
-      setLoading(false)
-    }
-    setExpanded(!expanded)
+  const handleOpen = async () => {
+    setModalOpen(true)
+    setLoading(true)
+    await fetchTestCases()
+    setLoading(false)
   }
 
   const fetchTestCases = async () => {
@@ -524,11 +522,11 @@ function ExpandableCaseTable({ featureId, featureName, caseCount, onDelete, onRe
   const caseColumns = [
     { title: '模块', dataIndex: 'module_name', width: 100 },
     { title: '功能项', dataIndex: 'function', width: 100 },
-    { title: '用例说明', dataIndex: 'case_description', width: 150 },
-    { title: '前置条件', dataIndex: 'precondition', width: 150, ellipsis: true, render: renderEllipsis },
-    { title: '输入', dataIndex: 'input_data', width: 150, ellipsis: true, render: renderEllipsis },
-    { title: '执行步骤', dataIndex: 'steps', width: 200, ellipsis: true, render: renderEllipsis },
-    { title: '预期结果', dataIndex: 'expected_result', width: 200, ellipsis: true, render: renderEllipsis },
+    { title: '用例说明', dataIndex: 'case_description', width: 180 },
+    { title: '前置条件', dataIndex: 'precondition', width: 180, ellipsis: true, render: renderEllipsis },
+    { title: '输入', dataIndex: 'input_data', width: 160, ellipsis: true, render: renderEllipsis },
+    { title: '执行步骤', dataIndex: 'steps', width: 220, ellipsis: true, render: renderEllipsis },
+    { title: '预期结果', dataIndex: 'expected_result', width: 220, ellipsis: true, render: renderEllipsis },
     {
       title: '优先级',
       dataIndex: 'priority',
@@ -556,32 +554,42 @@ function ExpandableCaseTable({ featureId, featureName, caseCount, onDelete, onRe
     },
   ]
 
+  const totalWidth = 100 + 100 + 180 + 180 + 160 + 220 + 220 + 70 + 80 + 70
+
   return (
-    <div>
-      <Space>
-        <Button size="small" onClick={handleExpand} loading={loading}>
-          {expanded ? '收起' : '查看用例'}
-        </Button>
-        {caseCount > 0 && (
-          <Popconfirm title={`确定清空该功能点下的 ${caseCount} 条用例?`} onConfirm={handleClearAll}>
-            <Button size="small" danger>
-              清空用例
-            </Button>
-          </Popconfirm>
-        )}
-      </Space>
-      {expanded && cases.length > 0 && (
+    <>
+      <Button size="small" onClick={handleOpen}>
+        查看用例
+      </Button>
+
+      <Modal
+        title={`测试用例 — ${featureName}`}
+        open={modalOpen}
+        onCancel={() => setModalOpen(false)}
+        width="90%"
+        style={{ top: 20 }}
+        footer={
+          <Space>
+            {cases.length > 0 && (
+              <Popconfirm title={`确定清空该功能点下的 ${cases.length} 条用例?`} onConfirm={handleClearAll}>
+                <Button danger>清空用例</Button>
+              </Popconfirm>
+            )}
+            <Button onClick={() => setModalOpen(false)}>关闭</Button>
+          </Space>
+        }
+      >
         <Table
           columns={caseColumns}
           dataSource={cases}
           size="small"
-          pagination={{ pageSize: 10 }}
+          loading={loading}
+          pagination={{ pageSize: 10, showTotal: (t) => `共 ${t} 条` }}
           rowKey="id"
-          scroll={{ x: 1270 }}
-          style={{ marginTop: 8 }}
+          scroll={{ x: totalWidth }}
         />
-      )}
-    </div>
+      </Modal>
+    </>
   )
 }
 
